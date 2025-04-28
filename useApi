@@ -1,0 +1,39 @@
+import { useState } from 'react';
+import axios from 'axios';
+
+const useApi = () => {
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const callApi = async (url, payload = {}, method = 'GET') => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const config = {
+        method,
+        url,
+        withCredentials: true, // Important if you want to handle cookies
+      };
+
+      if (method.toUpperCase() === 'GET') {
+        config.params = payload; // for GET, send payload as query params
+      } else {
+        config.data = payload; // for POST/PUT/PATCH, send payload as body
+      }
+
+      const response = await axios(config);
+      setData(response.data);
+    } catch (err) {
+      console.error('API call error:', err);
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { data, error, loading, callApi };
+};
+
+export default useApi;
