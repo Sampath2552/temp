@@ -1,0 +1,66 @@
+import React, { useState, useRef } from 'react';
+import { Box, Typography, Paper } from '@mui/material';
+
+const FileUpload = () => {
+  const [file, setFile] = useState(null);
+  const inputRef = useRef();
+
+  const handleDrop = (event) => {
+    event.preventDefault();
+    const droppedFile = event.dataTransfer.files[0];
+    if (droppedFile) {
+      setFile(droppedFile);
+    }
+  };
+
+  const handleDragOver = (event) => {
+    event.preventDefault(); // Necessary to allow drop
+  };
+
+  const handleClick = () => {
+    inputRef.current.click();
+  };
+
+  const handleFileChange = (event) => {
+    const selectedFile = event.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+    }
+  };
+
+  return (
+    <Paper
+      onDrop={handleDrop}
+      onDragOver={handleDragOver}
+      onClick={handleClick}
+      sx={{
+        border: '2px dashed #ccc',
+        padding: 4,
+        textAlign: 'center',
+        cursor: 'pointer',
+        backgroundColor: '#fafafa',
+        '&:hover': {
+          backgroundColor: '#f0f0f0',
+        },
+      }}
+    >
+      <input
+        type="file"
+        ref={inputRef}
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+      />
+      <Typography variant="h6">
+        Drag & drop a file here, or click to select
+      </Typography>
+      {file && (
+        <Box mt={2}>
+          <Typography variant="subtitle1">Selected File:</Typography>
+          <Typography>{file.name}</Typography>
+        </Box>
+      )}
+    </Paper>
+  );
+};
+
+export default FileUpload;
