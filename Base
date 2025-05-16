@@ -1,0 +1,127 @@
+import React, { useState, useMemo } from 'react';
+import {
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+  Paper, TablePagination, Typography, IconButton, Checkbox, Button, Box
+} from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+
+const TempGroupedTable = ({ data, rowsPerPage = 5, onEditBatch, onDeleteBatches }) => {
+  const [page, setPage] = useState(0);
+  const [selectedBatches, setSelectedBatches] = useState([]);
+
+  // Step 1: Group and flatten
+  const flattenedRows = useMemo(() => {
+    const grouped = data.reduce((acc, item) => {
+      const key = item.temp;
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(item);
+      return acc;
+    }, {});
+
+    const result = [];
+    for (const temp in grouped) {
+      result.push({ isGroupHeader: true, temp });
+      grouped[temp].forEach((item) => {
+        result.push({ ...item, isGroupHeader: false });
+      });
+    }
+    return result;
+  }, [data]);
+
+  // Pagination
+  const start = page * rowsPerPage;
+  const end = start + rowsPerPage;
+  const paginatedRows = flattenedRows.slice(start, end);
+
+  const handleChangePage = (_, newPage) => setPage(newPage);
+
+  const toggleSelectBatch = (temp) => {
+    setSelectedBatches((prev) =>
+      prev.includes(temp)
+        ? prev.filter((t) => t !== temp)
+        : [...prev, temp]
+    );
+  };
+
+  const isBatchSelected = (temp) => selectedBatches.includes(temp);
+
+  const handleDeleteSelected = () => {
+    if (onDeleteBatches && selectedBatches.length > 0) {
+      onDeleteBatches(selectedBatches);
+      setSelectedBatches([]); // Reset selection after delete
+    }
+  };
+
+  const handleEditClick = (temp) => {
+    onEditBatch?.(temp);
+  };
+
+  return (
+    <Paper>
+      <TableContainer>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Batch ID (temp)</TableCell>
+              <TableCell>Credit</TableCell>
+              <TableCell>Debit</TableCell>
+              <TableCell />
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {paginatedRows.map((row, idx) =>
+              row.isGroupHeader ? (
+                <TableRow key={`group-${row.temp}-${idx}`} sx={{ backgroundColor: '#f0f0f0' }}>
+                  <TableCell colSpan={1} sx={{ fontWeight: 'bold' }}>
+                    <Checkbox
+                      checked={isBatchSelected(row.temp)}
+                      onChange={() => toggleSelectBatch(row.temp)}
+                    />
+                    Group: {row.temp}
+                  </TableCell>
+                  <TableCell colSpan={2} />
+                  <TableCell>
+                    <IconButton onClick={() => handleEditClick(row.temp)}>
+                      <EditIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                <TableRow key={`row-${idx}`}>
+                  <TableCell>{row.temp}</TableCell>
+                  <TableCell>{row.credit}</TableCell>
+                  <TableCell>{row.debit}</TableCell>
+                  <TableCell />
+                </TableRow>
+              )
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      <TablePagination
+        component="div"
+        count={flattenedRows.length}
+        page={page}
+        onPageChange={handleChangePage}
+        rowsPerPage={rowsPerPage}
+        rowsPerPageOptions={[5, 10, 20]}
+        onRowsPerPageChange={(e) => setPage(0)}
+      />
+
+      {/* Delete action UI */}
+      {selectedBatches.length > 0 && (
+        <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography variant="body1">
+            Selected batches: {selectedBatches.join(', ')}
+          </Typography>
+          <Button variant="contained" color="error" onClick={handleDeleteSelected}>
+            Delete Selected
+          </Button>
+        </Box>
+      )}
+    </Paper>
+  );
+};
+
+export default TempGroupedTable;
