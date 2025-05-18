@@ -1,0 +1,13 @@
+<Context>
+  <!-- Add this block below inside Context -->
+  <Resource name="jndi/bsdb"
+            auth="Container"
+            type="javax.sql.DataSource"
+            maxTotal="20"
+            maxIdle="10"
+            maxWaitMillis="-1"
+            username="your_db_user"
+            password="your_db_password"
+            driverClassName="oracle.jdbc.OracleDriver"
+            url="jdbc:oracle:thin:@//your-db-host:1521/yourdb" />
+</Context>
