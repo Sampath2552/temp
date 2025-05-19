@@ -1,0 +1,26 @@
+set
+
+const selectedSet = new Set(selectedBatchIds);
+
+const getCreditsFromSelectedBatches = () => {
+  return data.reduce((acc, item) => {
+    if (selectedSet.has(item.temp)) {
+      const credit = parseFloat(item.credit || 0);
+      if (!isNaN(credit)) acc.push(credit);
+    }
+    return acc;
+  }, []);
+};
+
+
+reduce
+
+const getCreditsFromSelectedBatches = () => {
+  return data.reduce((acc, item) => {
+    if (selectedBatchIds.includes(item.temp)) {
+      const credit = parseFloat(item.credit || 0);
+      if (!isNaN(credit)) acc.push(credit);
+    }
+    return acc;
+  }, []);
+};
