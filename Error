@@ -1,0 +1,13 @@
+const theme = createTheme({
+  components: {
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          '&.Mui-error .MuiOutlinedInput-notchedOutline': {
+            borderColor: 'red',
+          },
+        },
+      },
+    },
+  },
+});
