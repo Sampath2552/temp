@@ -1,0 +1,11 @@
+<FormControl
+  fullWidth
+  error={true}
+  sx={{
+    '& .MuiOutlinedInput-root.Mui-error .MuiOutlinedInput-notchedOutline': {
+      borderColor: 'red',
+    },
+  }}
+>
+  ...
+</FormControl>
