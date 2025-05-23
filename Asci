@@ -1,0 +1,86 @@
+import React, { useState } from 'react';
+import {
+  Button,
+  Typography,
+  Box,
+  Alert
+} from '@mui/material';
+
+function TextFileUploader() {
+  const [file, setFile] = useState(null);
+  const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+
+  const handleFileChange = (event) => {
+    const selectedFile = event.target.files[0];
+
+    if (selectedFile && selectedFile.type === 'text/plain') {
+      setFile(selectedFile);
+      setError('');
+      setSuccessMessage('');
+    } else {
+      setFile(null);
+      setError('Only .txt files are allowed.');
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch('http://your-server/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        setSuccessMessage('File uploaded successfully!');
+      } else {
+        setError('Upload failed.');
+      }
+    } catch (err) {
+      setError('Upload failed: ' + err.message);
+    }
+  };
+
+  return (
+    <Box sx={{ p: 3, maxWidth: 500, mx: 'auto' }}>
+      <Typography variant="h6" gutterBottom>
+        Upload a .txt File
+      </Typography>
+
+      <Button variant="outlined" component="label">
+        Select .txt File
+        <input
+          type="file"
+          accept=".txt"
+          hidden
+          onChange={handleFileChange}
+        />
+      </Button>
+
+      {file && (
+        <Typography variant="body2" sx={{ mt: 1 }}>
+          Selected: {file.name}
+        </Typography>
+      )}
+
+      {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
+      {successMessage && <Alert severity="success" sx={{ mt: 2 }}>{successMessage}</Alert>}
+
+      <Button
+        variant="contained"
+        onClick={handleUpload}
+        sx={{ mt: 2 }}
+        disabled={!file}
+      >
+        Upload
+      </Button>
+    </Box>
+  );
+}
+
+export default TextFileUploader;
