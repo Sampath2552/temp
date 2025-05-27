@@ -1,0 +1,45 @@
+// themeOverrides.js
+import { createTheme } from '@mui/material/styles';
+
+export const getSelectAndAutocompleteOverrideTheme = (globalTheme) =>
+  createTheme({
+    ...globalTheme,
+    components: {
+      MuiSelect: {
+        styleOverrides: {
+          root: {
+            backgroundColor: globalTheme.palette.mode === 'dark' ? '#1e1e1e' : '#ffffff',
+            color: globalTheme.palette.mode === 'dark' ? '#ffffff' : '#000000',
+            '& .MuiOutlinedInput-notchedOutline': {
+              borderColor: globalTheme.palette.mode === 'dark' ? '#888' : '#ccc',
+            },
+            '&:hover .MuiOutlinedInput-notchedOutline': {
+              borderColor: globalTheme.palette.mode === 'dark' ? '#aaa' : '#888',
+            },
+            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+              borderColor: globalTheme.palette.mode === 'dark' ? '#90caf9' : '#1976d2',
+            },
+          },
+        },
+      },
+      MuiAutocomplete: {
+        styleOverrides: {
+          root: {
+            backgroundColor: globalTheme.palette.mode === 'dark' ? '#1e1e1e' : '#ffffff',
+            color: globalTheme.palette.mode === 'dark' ? '#ffffff' : '#000000',
+            '& .MuiOutlinedInput-root': {
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderColor: globalTheme.palette.mode === 'dark' ? '#888' : '#ccc',
+              },
+              '&:hover .MuiOutlinedInput-notchedOutline': {
+                borderColor: globalTheme.palette.mode === 'dark' ? '#aaa' : '#888',
+              },
+              '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                borderColor: globalTheme.palette.mode === 'dark' ? '#90caf9' : '#1976d2',
+              },
+            },
+          },
+        },
+      },
+    },
+  });
