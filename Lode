@@ -1,0 +1,45 @@
+import React from "react";
+import { CircularProgress, Box } from "@mui/material";
+
+const BlurLoader = ({ loading, children }) => {
+  return (
+    <Box
+      position="relative"
+      sx={{
+        overflow: "hidden",
+      }}
+    >
+      {/* Blur and disable interaction when loading */}
+      <Box
+        sx={{
+          filter: loading ? "blur(4px)" : "none",
+          pointerEvents: loading ? "none" : "auto",
+          transition: "filter 0.3s ease",
+        }}
+      >
+        {children}
+      </Box>
+
+      {/* Loader overlay */}
+      {loading && (
+        <Box
+          position="absolute"
+          top={0}
+          left={0}
+          right={0}
+          bottom={0}
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          bgcolor="rgba(255,255,255,0.6)" // light overlay
+          sx={{ backdropFilter: "blur(2px)" }} // extra blur behind spinner
+          zIndex={10}
+        >
+          <CircularProgress />
+        </Box>
+      )}
+    </Box>
+  );
+};
+
+export default BlurLoader;
