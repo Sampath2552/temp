@@ -1,0 +1,58 @@
+import { Table, TableBody, TableRow, TableCell, Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
+
+const CGLDialog = ({ item }) => {
+  const [details, setDetails] = useState([]);
+  const [subDataMap, setSubDataMap] = useState({});
+  const [expandedRowId, setExpandedRowId] = useState(null);
+
+  useEffect(() => {
+    fetch(`/api/details/${item.id}`).then(res => res.json()).then(setDetails);
+  }, [item]);
+
+  const handleRowClick = async (rowId) => {
+    if (subDataMap[rowId]) {
+      setExpandedRowId(expandedRowId === rowId ? null : rowId);
+      return;
+    }
+
+    const res = await fetch(`/api/subdata/${rowId}`);
+    const subData = await res.json();
+    setSubDataMap(prev => ({ ...prev, [rowId]: subData }));
+    setExpandedRowId(rowId);
+  };
+
+  return (
+    <Table>
+      <TableBody>
+        {details.map(detail => (
+          <React.Fragment key={detail.id}>
+            <TableRow onClick={() => handleRowClick(detail.id)} hover>
+              <TableCell>{detail.title}</TableCell>
+              <TableCell>{detail.status}</TableCell>
+            </TableRow>
+
+            {expandedRowId === detail.id && subDataMap[detail.id] && (
+              <TableRow>
+                <TableCell colSpan={2}>
+                  <Table size="small">
+                    <TableBody>
+                      {subDataMap[detail.id].map((sub, i) => (
+                        <TableRow key={i}>
+                          <TableCell>{sub.info}</TableCell>
+                          <TableCell>{sub.more}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableCell>
+              </TableRow>
+            )}
+          </React.Fragment>
+        ))}
+      </TableBody>
+    </Table>
+  );
+};
+
+export default CGLDialog;
