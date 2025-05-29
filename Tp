@@ -1,0 +1,106 @@
+import React, { useState, useEffect } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Paper,
+  Checkbox,
+  TableHead,
+  TablePagination,
+} from "@mui/material";
+
+const JournalTable = ({ data }) => {
+  const [selectedJournals, setSelectedJournals] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(2);
+
+  const journalIds = Object.keys(data || {});
+  const pageCount = Math.ceil(journalIds.length / rowsPerPage);
+
+  // Reset pagination and selection when data changes
+  useEffect(() => {
+    setSelectedJournals([]);
+    setPage(0);
+  }, [data]);
+
+  const handleCheckboxChange = (journalId) => {
+    setSelectedJournals((prev) =>
+      prev.includes(journalId)
+        ? prev.filter((id) => id !== journalId)
+        : [...prev, journalId]
+    );
+  };
+
+  const handleChangePage = (_, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0); // reset to first page
+  };
+
+  const paginatedJournals = journalIds.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
+
+  return (
+    <Paper>
+      <TableContainer>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell width={100}>Select</TableCell>
+              <TableCell>Journal ID / Title</TableCell>
+              <TableCell>Author</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {paginatedJournals.map((journalId) => (
+              <React.Fragment key={journalId}>
+                {/* Parent Row */}
+                <TableRow>
+                  <TableCell>
+                    <Checkbox
+                      checked={selectedJournals.includes(journalId)}
+                      onChange={() => handleCheckboxChange(journalId)}
+                    />
+                  </TableCell>
+                  <TableCell colSpan={2} style={{ fontWeight: "bold" }}>
+                    {journalId}
+                  </TableCell>
+                </TableRow>
+
+                {/* Child Rows */}
+                {(data[journalId] || []).map((entry, idx) => (
+                  <TableRow key={idx}>
+                    <TableCell />
+                    <TableCell>{entry.title}</TableCell>
+                    <TableCell>{entry.author}</TableCell>
+                  </TableRow>
+                ))}
+              </React.Fragment>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      {/* TablePagination */}
+      <TablePagination
+        component="div"
+        count={journalIds.length}
+        page={page}
+        onPageChange={handleChangePage}
+        rowsPerPage={rowsPerPage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        rowsPerPageOptions={[2, 5, 10]}
+        labelRowsPerPage="Journals per page"
+      />
+    </Paper>
+  );
+};
+
+export default JournalTable;
