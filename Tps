@@ -1,0 +1,168 @@
+import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Paper,
+  Checkbox,
+  TableHead,
+  TablePagination,
+  TextField,
+  Box,
+} from "@mui/material";
+
+const JournalTable = ({ data }) => {
+  const [selectedJournals, setSelectedJournals] = useState(new Set());
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(2);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const tableTopRef = useRef(null);
+
+  const journalIds = useMemo(() => Object.keys(data || {}), [data]);
+
+  const filteredJournalIds = useMemo(() => {
+    return journalIds.filter((id) =>
+      id.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [journalIds, searchQuery]);
+
+  const paginatedJournals = useMemo(() => {
+    return filteredJournalIds.slice(
+      page * rowsPerPage,
+      page * rowsPerPage + rowsPerPage
+    );
+  }, [filteredJournalIds, page, rowsPerPage]);
+
+  useEffect(() => {
+    setSelectedJournals(new Set());
+    setPage(0);
+    setSearchQuery("");
+  }, [data]);
+
+  useEffect(() => {
+    if (tableTopRef.current) {
+      tableTopRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [page]);
+
+  const isAllSelected = useMemo(() => {
+    return paginatedJournals.length > 0 &&
+      paginatedJournals.every((id) => selectedJournals.has(id));
+  }, [paginatedJournals, selectedJournals]);
+
+  const isIndeterminate = useMemo(() => {
+    return !isAllSelected && paginatedJournals.some((id) => selectedJournals.has(id));
+  }, [isAllSelected, paginatedJournals, selectedJournals]);
+
+  const handleToggleJournal = useCallback((journalId) => {
+    setSelectedJournals((prev) => {
+      const newSet = new Set(prev);
+      newSet.has(journalId) ? newSet.delete(journalId) : newSet.add(journalId);
+      return newSet;
+    });
+  }, []);
+
+  const handleToggleAll = useCallback(() => {
+    setSelectedJournals((prev) => {
+      const newSet = new Set(prev);
+      const allSelected = paginatedJournals.every((id) => newSet.has(id));
+      paginatedJournals.forEach((id) =>
+        allSelected ? newSet.delete(id) : newSet.add(id)
+      );
+      return newSet;
+    });
+  }, [paginatedJournals]);
+
+  const handleChangePage = useCallback((_, newPage) => {
+    setPage(newPage);
+  }, []);
+
+  const handleChangeRowsPerPage = useCallback((event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  }, []);
+
+  const handleSearchChange = useCallback((e) => {
+    setSearchQuery(e.target.value);
+    setPage(0); // reset to first page on search
+  }, []);
+
+  return (
+    <Paper ref={tableTopRef}>
+      <Box p={2}>
+        <TextField
+          fullWidth
+          label="Search Journal ID"
+          variant="outlined"
+          value={searchQuery}
+          onChange={handleSearchChange}
+        />
+      </Box>
+
+      <TableContainer sx={{ maxHeight: 400 }}>
+        <Table stickyHeader>
+          <TableHead>
+            <TableRow>
+              <TableCell width={100}>
+                <Checkbox
+                  checked={isAllSelected}
+                  indeterminate={isIndeterminate}
+                  onChange={handleToggleAll}
+                />
+              </TableCell>
+              <TableCell>Journal ID / Title</TableCell>
+              <TableCell>Author</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {paginatedJournals.map((journalId) => (
+              <React.Fragment key={journalId}>
+                <TableRow>
+                  <TableCell>
+                    <Checkbox
+                      checked={selectedJournals.has(journalId)}
+                      onChange={() => handleToggleJournal(journalId)}
+                    />
+                  </TableCell>
+                  <TableCell colSpan={2} style={{ fontWeight: "bold" }}>
+                    {journalId}
+                  </TableCell>
+                </TableRow>
+                {(data[journalId] || []).map((entry, idx) => (
+                  <TableRow key={idx}>
+                    <TableCell />
+                    <TableCell>{entry.title}</TableCell>
+                    <TableCell>{entry.author}</TableCell>
+                  </TableRow>
+                ))}
+              </React.Fragment>
+            ))}
+            {paginatedJournals.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={3} align="center">
+                  No matching journal IDs found.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      <TablePagination
+        component="div"
+        count={filteredJournalIds.length}
+        page={page}
+        onPageChange={handleChangePage}
+        rowsPerPage={rowsPerPage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        rowsPerPageOptions={[2, 5, 10]}
+        labelRowsPerPage="Journals per page"
+      />
+    </Paper>
+  );
+};
+
+export default JournalTable;
