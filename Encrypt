@@ -1,0 +1,18 @@
+function encrypt(iv, salt, data) {
+  return encryptData(iv, salt, passphrase, data)
+    .then((value) => {
+      return arrayBufferToBase64(value.encryptedData); // ✅ safe encoding
+    })
+    .catch((e) => {
+      console.error(e);
+    });
+}
+
+function arrayBufferToBase64(buffer) {
+  let binary = '';
+  const bytes = new Uint8Array(buffer);
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
