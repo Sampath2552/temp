@@ -1,0 +1,101 @@
+import React, { useState } from 'react';
+import {
+  Box, Button, TextField, Typography, useTheme, createTheme, ThemeProvider, IconButton
+} from '@mui/material';
+import { Brightness4, Brightness7 } from '@mui/icons-material';
+
+function GlassLogin() {
+  const [mode, setMode] = useState('light');
+
+  const theme = createTheme({
+    palette: {
+      mode,
+    },
+  });
+
+  const handleThemeToggle = () => {
+    setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+  };
+
+  return (
+    <ThemeProvider theme={theme}>
+      <Box
+        sx={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundImage:
+            mode === 'light'
+              ? 'linear-gradient(135deg, #fceabb, #f8b500)'
+              : 'linear-gradient(135deg, #434343, #000000)',
+        }}
+      >
+        <IconButton
+          onClick={handleThemeToggle}
+          sx={{ position: 'absolute', top: 16, right: 16, color: 'white' }}
+        >
+          {mode === 'light' ? <Brightness4 /> : <Brightness7 />}
+        </IconButton>
+
+        <Box
+          sx={{
+            backdropFilter: 'blur(10px)',
+            background: 'rgba(255, 255, 255, 0.15)',
+            borderRadius: '16px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
+            padding: 4,
+            width: 300,
+            color: 'white',
+          }}
+        >
+          <Typography variant="h5" align="center" gutterBottom>
+            Login
+          </Typography>
+          <TextField
+            label="Email"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            InputProps={{
+              sx: {
+                color: 'white',
+                '& .MuiOutlinedInput-notchedOutline': { borderColor: 'white' },
+              },
+            }}
+            InputLabelProps={{
+              sx: { color: 'white' },
+            }}
+          />
+          <TextField
+            label="Password"
+            variant="outlined"
+            type="password"
+            fullWidth
+            margin="normal"
+            InputProps={{
+              sx: {
+                color: 'white',
+                '& .MuiOutlinedInput-notchedOutline': { borderColor: 'white' },
+              },
+            }}
+            InputLabelProps={{
+              sx: { color: 'white' },
+            }}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth
+            sx={{ mt: 2 }}
+          >
+            Sign In
+          </Button>
+        </Box>
+      </Box>
+    </ThemeProvider>
+  );
+}
+
+export default GlassLogin;
