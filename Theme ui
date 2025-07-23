@@ -1,0 +1,46 @@
+// theme.js
+import { createTheme } from '@mui/material/styles';
+
+const hsl = (value) => `hsl(${value})`;
+
+const theme = createTheme({
+  palette: {
+    mode: 'light', // Can be toggled dynamically
+    background: {
+      default: hsl('0 0% 100%'),
+      paper: hsl('0 0% 100%'),
+    },
+    primary: {
+      main: hsl('258 90% 66%'),
+      contrastText: '#fff',
+    },
+    secondary: {
+      main: hsl('271 81% 56%'),
+    },
+    text: {
+      primary: hsl('222.2 84% 4.9%'),
+      secondary: hsl('222.2 84% 30%'),
+    },
+  },
+  shape: {
+    borderRadius: 16,
+  },
+  shadows: [
+    'none',
+    '0 8px 32px 0 rgba(31, 38, 135, 0.37)', // glass-glow
+    ...Array(23).fill('0 4px 30px rgba(0, 0, 0, 0.1)')
+  ],
+  components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backdropFilter: 'blur(20px)',
+          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+        },
+      },
+    },
+  },
+});
+
+export default theme;
