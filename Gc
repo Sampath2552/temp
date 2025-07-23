@@ -1,0 +1,15 @@
+// GlassCard.js
+import { styled } from '@mui/material/styles';
+import Paper from '@mui/material/Paper';
+
+const GlassCard = styled(Paper)(({ theme }) => ({
+  borderRadius: '24px',
+  padding: theme.spacing(4),
+  backdropFilter: 'blur(40px)',
+  background: 'rgba(255, 255, 255, 0.1)',
+  border: '1px solid rgba(255, 255, 255, 0.2)',
+  boxShadow: theme.shadows[1],
+  transition: 'all 0.5s ease',
+}));
+
+export default GlassCard;
