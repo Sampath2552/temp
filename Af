@@ -1,0 +1,160 @@
+// LoginCard.js
+import { useState } from 'react';
+import { Box, Typography, TextField, Button, IconButton } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import GlassCard from './GlassCard';
+import { Mail, Lock, SwapHoriz, Person } from '@mui/icons-material';
+import { slideInLeft, slideInRight } from './animations';
+
+const AnimatedBox = styled(Box)(({ direction }) => ({
+  animation: `${direction === 'left' ? slideInLeft : slideInRight} 0.6s ease-in-out`,
+}));
+
+const InfoPanel = ({ side }) => (
+  <AnimatedBox direction={side}>
+    <Typography variant="h4" sx={{ mb: 2, fontWeight: 600, background: 'linear-gradient(to right, hsl(258 90% 66%), hsl(271 81% 56%))', WebkitBackgroundClip: 'text', color: 'transparent' }}>
+      Welcome Back
+    </Typography>
+    <Typography variant="body1" sx={{ mb: 4, opacity: 0.8 }}>
+      Experience the future of authentication with our seamless, secure login system.
+    </Typography>
+    <ul style={{ opacity: 0.7 }}>
+      <li>• Advanced security protocols</li>
+      <li>• Lightning-fast authentication</li>
+      <li>• Seamless user experience</li>
+    </ul>
+  </AnimatedBox>
+);
+
+const LoginCard = ({ isFlipped, onFlip }) => {
+  const [credentials, setCredentials] = useState({
+    userId: '',
+    password: '',
+    googleId: '',
+  });
+
+  const handleChange = (field) => (e) => {
+    setCredentials((prev) => ({ ...prev, [field]: e.target.value }));
+  };
+
+  const StandardForm = () => (
+    <AnimatedBox direction="right">
+      <Typography variant="h5" gutterBottom>Sign In</Typography>
+      <Typography variant="body2" sx={{ mb: 2, opacity: 0.6 }}>
+        Enter your credentials to continue
+      </Typography>
+
+      <TextField
+        fullWidth
+        label="User ID"
+        placeholder="Enter your user ID"
+        value={credentials.userId}
+        onChange={handleChange('userId')}
+        margin="normal"
+        InputProps={{
+          startAdornment: <Person sx={{ mr: 1, opacity: 0.5 }} />
+        }}
+      />
+
+      <TextField
+        fullWidth
+        label="Password"
+        type="password"
+        placeholder="Enter your password"
+        value={credentials.password}
+        onChange={handleChange('password')}
+        margin="normal"
+        InputProps={{
+          startAdornment: <Lock sx={{ mr: 1, opacity: 0.5 }} />
+        }}
+      />
+
+      <Button
+        fullWidth
+        variant="contained"
+        sx={{
+          mt: 3,
+          borderRadius: 2,
+          background: 'linear-gradient(to right, hsl(258 90% 66%), hsl(271 81% 56%))',
+          color: '#fff',
+          fontWeight: 600,
+        }}
+      >
+        Sign In
+      </Button>
+
+      <Box textAlign="center" mt={2}>
+        <Button
+          onClick={onFlip}
+          startIcon={<SwapHoriz />}
+          sx={{ textTransform: 'none', opacity: 0.7 }}
+        >
+          Switch to Google Sign In
+        </Button>
+      </Box>
+    </AnimatedBox>
+  );
+
+  const GoogleForm = () => (
+    <AnimatedBox direction="left">
+      <Typography variant="h5" gutterBottom>Google Sign In</Typography>
+      <Typography variant="body2" sx={{ mb: 2, opacity: 0.6 }}>
+        Use your Google account to continue
+      </Typography>
+
+      <TextField
+        fullWidth
+        label="Google Email"
+        type="email"
+        placeholder="Enter your Google ID"
+        value={credentials.googleId}
+        onChange={handleChange('googleId')}
+        margin="normal"
+        InputProps={{
+          startAdornment: <Mail sx={{ mr: 1, opacity: 0.5 }} />
+        }}
+      />
+
+      <Button
+        fullWidth
+        variant="contained"
+        sx={{
+          mt: 3,
+          borderRadius: 2,
+          background: 'linear-gradient(to right, hsl(258 90% 66%), hsl(271 81% 56%))',
+          color: '#fff',
+          fontWeight: 600,
+        }}
+      >
+        Continue with Google
+      </Button>
+
+      <Box textAlign="center" mt={2}>
+        <Button
+          onClick={onFlip}
+          startIcon={<SwapHoriz />}
+          sx={{ textTransform: 'none', opacity: 0.7 }}
+        >
+          Back to Standard Sign In
+        </Button>
+      </Box>
+    </AnimatedBox>
+  );
+
+  return (
+    <Box
+      display="grid"
+      gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }}
+      component={GlassCard}
+      minHeight={600}
+      overflow="hidden"
+    >
+      <Box p={4}>{!isFlipped ? <InfoPanel side="left" /> : <GoogleForm />}</Box>
+      <Box p={4} borderLeft={{ md: '1px solid rgba(255,255,255,0.1)' }}>
+        {!isFlipped ? <StandardForm /> : <InfoPanel side="right" />}
+      </Box>
+    </Box>
+  );
+};
+
+export default LoginCard;
