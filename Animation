@@ -1,0 +1,22 @@
+// animations.js
+import { keyframes } from '@emotion/react';
+
+export const float = keyframes`
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+`;
+
+export const glowPulse = keyframes`
+  0%, 100% { box-shadow: 0 0 60px hsl(271 91% 85% / 0.3); }
+  50% { box-shadow: 0 0 80px hsl(271 91% 85% / 0.5); }
+`;
+
+export const slideInLeft = keyframes`
+  0% { transform: translateX(-100%); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+`;
+
+export const slideInRight = keyframes`
+  0% { transform: translateX(100%); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+`;
