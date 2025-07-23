@@ -1,0 +1,78 @@
+// Index.js
+import { useState } from 'react';
+import { ThemeProvider, CssBaseline, Box } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import theme from './theme';
+import LoginCard from './LoginCard';
+import glassBg from './assets/glass-bg.jpg';
+import { float, glowPulse } from './animations';
+
+// Floating orb blobs
+const FloatingBlob = styled(Box)(({ theme }) => ({
+  position: 'absolute',
+  borderRadius: '50%',
+  filter: 'blur(40px)',
+  animation: `${float} 6s ease-in-out infinite`,
+}));
+
+const GlowOrb = styled(Box)(({ size, top, left, right, bottom, color, delay }) => ({
+  position: 'absolute',
+  width: size,
+  height: size,
+  backgroundColor: color,
+  borderRadius: '50%',
+  filter: 'blur(40px)',
+  animation: `${glowPulse} 8s ease-in-out infinite`,
+  top,
+  left,
+  right,
+  bottom,
+  animationDelay: delay || '0s',
+}));
+
+const BackgroundOverlay = styled(Box)({
+  position: 'absolute',
+  inset: 0,
+  background: 'linear-gradient(to bottom right, rgba(147, 112, 219, 0.2), rgba(238, 130, 238, 0.2))',
+  zIndex: 1,
+  pointerEvents: 'none',
+});
+
+const GlassBackground = styled(Box)({
+  minHeight: '100vh',
+  position: 'relative',
+  backgroundImage: `url(${glassBg})`,
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  backgroundRepeat: 'no-repeat',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  padding: '24px',
+  overflow: 'hidden',
+});
+
+const Index = () => {
+  const [isFlipped, setIsFlipped] = useState(false);
+
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <GlassBackground>
+        <BackgroundOverlay />
+
+        {/* Floating Orbs */}
+        <GlowOrb size="120px" top="20%" left="10%" color="rgba(147, 112, 219, 0.2)" />
+        <GlowOrb size="160px" bottom="10%" right="15%" color="rgba(238, 130, 238, 0.2)" delay="1s" />
+        <GlowOrb size="100px" top="50%" left="25%" color="rgba(200, 100, 255, 0.2)" />
+
+        {/* LoginCard */}
+        <Box position="relative" zIndex={2} width="100%" maxWidth="1100px">
+          <LoginCard isFlipped={isFlipped} onFlip={() => setIsFlipped(!isFlipped)} />
+        </Box>
+      </GlassBackground>
+    </ThemeProvider>
+  );
+};
+
+export default Index;
