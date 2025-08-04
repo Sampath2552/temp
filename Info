@@ -1,0 +1,99 @@
+import { Box, Typography, Stack, Paper } from '@mui/material';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
+import ShieldIcon from '@mui/icons-material/Security';
+import LockIcon from '@mui/icons-material/Lock';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney'; // Used for Banknote
+
+export default function DigitalBankingIntro() {
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        px: 12,
+        py: 16,
+        animation: 'scale-in 0.5s ease-in-out',
+      }}
+    >
+      <Box>
+        <Stack direction="row" alignItems="center" spacing={2} mb={4}>
+          <Box
+            sx={{
+              p: 1,
+              borderRadius: 3,
+              background: 'linear-gradient(to right, rgba(59,130,246,0.2), rgba(148,163,184,0.2))',
+              backdropFilter: 'blur(6px)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <CreditCardIcon sx={{ color: '#60a5fa', fontSize: 24 }} />
+          </Box>
+          <Typography
+            variant="h4"
+            sx={{
+              fontWeight: 'bold',
+              background: 'linear-gradient(to right, #60a5fa, #cbd5e1)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              display: 'inline-block',
+            }}
+          >
+            SecureBank
+          </Typography>
+        </Stack>
+
+        <Typography
+          variant="h5"
+          sx={{ fontWeight: 600, mb: 2, color: '#ffffff' }}
+        >
+          Welcome to Digital Banking
+        </Typography>
+
+        <Typography
+          variant="body1"
+          sx={{
+            color: 'rgba(255, 255, 255, 0.8)',
+            mb: 4,
+            lineHeight: 1.75,
+          }}
+        >
+          Access your accounts securely with our advanced digital banking platform.
+          Your financial security is our top priority.
+        </Typography>
+
+        <Stack spacing={2} mb={4}>
+          <Stack direction="row" spacing={1} alignItems="center" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+            <ShieldIcon sx={{ fontSize: 20, color: '#60a5fa' }} />
+            <Typography variant="body2">256-bit SSL encryption</Typography>
+          </Stack>
+          <Stack direction="row" spacing={1} alignItems="center" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+            <LockIcon sx={{ fontSize: 20, color: '#60a5fa' }} />
+            <Typography variant="body2">Multi-factor authentication</Typography>
+          </Stack>
+          <Stack direction="row" spacing={1} alignItems="center" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+            <AttachMoneyIcon sx={{ fontSize: 20, color: '#60a5fa' }} />
+            <Typography variant="body2">FDIC insured deposits</Typography>
+          </Stack>
+        </Stack>
+
+        <Paper
+          variant="outlined"
+          sx={{
+            mt: 4,
+            p: 2,
+            borderRadius: 3,
+            backgroundColor: 'rgba(255, 255, 255, 0.05)',
+            borderColor: 'rgba(255, 255, 255, 0.1)',
+          }}
+        >
+          <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+            🔒 Your session is protected by bank-grade security protocols
+          </Typography>
+        </Paper>
+      </Box>
+    </Box>
+  );
+}
