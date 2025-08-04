@@ -1,0 +1,91 @@
+import { useState } from 'react';
+import { Box, Grid, Paper } from '@mui/material';
+import InfoPanel from './InfoPanel';
+import StandardForm from './StandardForm';
+import GoogleForm from './GoogleForm';
+
+interface LoginCardProps {
+  isFlipped: boolean;
+  onFlip: () => void;
+}
+
+export const LoginCard = ({ isFlipped, onFlip }: LoginCardProps) => {
+  const [credentials, setCredentials] = useState({
+    userId: '',
+    password: '',
+    googleId: '',
+  });
+
+  const handleInputChange = (field: string, value: string) => {
+    setCredentials(prev => ({ ...prev, [field]: value }));
+  };
+
+  return (
+    <Box
+      width="100%"
+      maxWidth="1440px"
+      mx="auto"
+      px={2}
+      py={4}
+    >
+      <Paper
+        elevation={10}
+        sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', lg: 'row' },
+          minHeight: '600px',
+          overflow: 'hidden',
+          borderRadius: '24px',
+          backgroundColor: 'rgba(255, 255, 255, 0.05)',
+          backdropFilter: 'blur(24px)',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+        }}
+      >
+        {/* Left Side */}
+        <Box
+          flex={1}
+          sx={{
+            animation: 'slide-in-right 0.6s ease',
+            '@keyframes slide-in-right': {
+              from: { transform: 'translateX(-20px)', opacity: 0 },
+              to: { transform: 'translateX(0)', opacity: 1 },
+            },
+          }}
+        >
+          {!isFlipped ? (
+            <InfoPanel />
+          ) : (
+            <GoogleForm
+              credentials={credentials}
+              handleInputChange={handleInputChange}
+              onFlip={onFlip}
+            />
+          )}
+        </Box>
+
+        {/* Right Side */}
+        <Box
+          flex={1}
+          sx={{
+            borderLeft: { lg: '1px solid rgba(255, 255, 255, 0.1)' },
+            animation: 'fade-in 0.6s ease',
+            '@keyframes fade-in': {
+              from: { opacity: 0 },
+              to: { opacity: 1 },
+            },
+          }}
+        >
+          {!isFlipped ? (
+            <StandardForm
+              credentials={credentials}
+              handleInputChange={handleInputChange}
+              onFlip={onFlip}
+            />
+          ) : (
+            <InfoPanel />
+          )}
+        </Box>
+      </Paper>
+    </Box>
+  );
+};
