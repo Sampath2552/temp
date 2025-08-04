@@ -1,0 +1,181 @@
+import { useEffect } from "react";
+import {
+  Box,
+  Button,
+  Typography,
+  Paper,
+  Container,
+  Divider,
+  Stack,
+  IconButton
+} from "@mui/material";
+import { styled } from "@mui/system";
+import { AlertTriangle, RefreshCw, Home, Phone } from "lucide-react";
+
+const Background = styled(Box)(({ theme }) => ({
+  position: "absolute",
+  inset: 0,
+  backgroundImage: "url('/src/assets/glass-bg.jpg')",
+  backgroundSize: "cover",
+  backgroundPosition: "center",
+  opacity: 0.2,
+  zIndex: 0
+}));
+
+const BlurOverlay = styled(Box)({
+  position: "absolute",
+  inset: 0,
+  backdropFilter: "blur(40px)",
+  zIndex: 1
+});
+
+const Card = styled(Paper)(({ theme }) => ({
+  position: "relative",
+  zIndex: 2,
+  maxWidth: 480,
+  width: "100%",
+  margin: "auto",
+  padding: theme.spacing(6),
+  borderRadius: theme.spacing(3),
+  backdropFilter: "blur(24px)",
+  backgroundColor: "rgba(255, 255, 255, 0.05)",
+  border: "1px solid rgba(255,255,255,0.1)",
+  boxShadow: theme.shadows[12],
+  textAlign: "center"
+}));
+
+const ServerError = () => {
+  useEffect(() => {
+    console.error("505 Error: Internal server error occurred");
+  }, []);
+
+  const handleRefresh = () => {
+    window.location.reload();
+  };
+
+  return (
+    <Box
+      sx={{
+        minHeight: "100vh",
+        position: "relative",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "linear-gradient(to bottom right, rgba(255,0,0,0.1), rgba(0,0,0,0.2))"
+      }}
+    >
+      <Background />
+      <BlurOverlay />
+
+      <Card>
+        <Box sx={{ display: "flex", justifyContent: "center", mb: 4 }}>
+          <Box
+            sx={{
+              p: 2,
+              borderRadius: "50%",
+              backgroundColor: "rgba(255,0,0,0.2)",
+              backdropFilter: "blur(4px)",
+              animation: "pulse 2s infinite"
+            }}
+          >
+            <AlertTriangle size={48} color="#EF4444" />
+          </Box>
+        </Box>
+
+        <Typography
+          variant="h1"
+          sx={{
+            fontWeight: "bold",
+            mb: 2,
+            background: "linear-gradient(to right, #EF4444, #F97316)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            fontSize: { xs: "3rem", sm: "4rem" }
+          }}
+        >
+          505
+        </Typography>
+
+        <Typography variant="h5" sx={{ mb: 2 }}>
+          Server Error
+        </Typography>
+
+        <Typography sx={{ color: "text.secondary", mb: 4 }}>
+          Our banking systems are experiencing technical difficulties. Our team has been notified and is working to resolve this issue.
+        </Typography>
+
+        <Paper
+          elevation={0}
+          sx={{
+            backgroundColor: "rgba(255,0,0,0.05)",
+            border: "1px solid rgba(255,0,0,0.2)",
+            borderRadius: 2,
+            p: 2,
+            mb: 4
+          }}
+        >
+          <Typography
+            variant="subtitle2"
+            sx={{ color: "#EF4444", fontWeight: 500, mb: 1 }}
+          >
+            Important Security Notice
+          </Typography>
+          <Typography variant="caption" sx={{ color: "text.secondary" }}>
+            Your account remains secure. No unauthorized access has occurred. Please try again in a few minutes.
+          </Typography>
+        </Paper>
+
+        <Stack
+          spacing={2}
+          direction={{ xs: "column", sm: "row" }}
+          justifyContent="center"
+          mb={4}
+        >
+          <Button
+            onClick={handleRefresh}
+            variant="outlined"
+            startIcon={<RefreshCw size={16} />}
+            sx={{
+              backdropFilter: "blur(4px)",
+              backgroundColor: "rgba(255,255,255,0.05)",
+              borderColor: "rgba(255,255,255,0.1)",
+              "&:hover": {
+                backgroundColor: "rgba(255,255,255,0.15)"
+              }
+            }}
+          >
+            Try Again
+          </Button>
+          <Button
+            variant="contained"
+            startIcon={<Home size={16} />}
+            href="/"
+          >
+            Banking Home
+          </Button>
+        </Stack>
+
+        <Divider sx={{ borderColor: "rgba(255,255,255,0.1)", mb: 3 }} />
+
+        <Typography variant="body2" color="text.secondary" mb={2}>
+          Need immediate assistance?
+        </Typography>
+        <Button
+          variant="text"
+          size="small"
+          startIcon={<Phone size={16} />}
+          sx={{ color: "primary.main" }}
+        >
+          Call Banking Support: 1-800-BANK
+        </Button>
+
+        <Divider sx={{ borderColor: "rgba(255,255,255,0.1)", mt: 4, mb: 2 }} />
+        <Typography variant="caption" sx={{ color: "text.secondary" }}>
+          Error Code: 505 | Secure Banking Portal | Support Reference: #{Date.now().toString().slice(-6)}
+        </Typography>
+      </Card>
+    </Box>
+  );
+};
+
+export default ServerError;
