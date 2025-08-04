@@ -1,0 +1,165 @@
+import {
+  Box,
+  Typography,
+  TextField,
+  Button,
+  InputAdornment,
+  IconButton,
+} from '@mui/material';
+import { Lock, User, ArrowRightLeft } from 'lucide-react';
+
+interface FormProps {
+  credentials: {
+    userId: string;
+    password: string;
+  };
+  handleInputChange: (key: 'userId' | 'password', value: string) => void;
+  onFlip: () => void;
+}
+
+const StandardForm = ({ credentials, handleInputChange, onFlip }: FormProps) => (
+  <Box
+    display="flex"
+    flexDirection="column"
+    justifyContent="center"
+    px={12}
+    py={8}
+    sx={{
+      animation: 'fade-in 0.5s ease',
+      '@keyframes fade-in': {
+        from: { opacity: 0, transform: 'translateY(8px)' },
+        to: { opacity: 1, transform: 'translateY(0)' },
+      },
+    }}
+  >
+    <Box maxWidth="400px" mx="auto" display="flex" flexDirection="column" gap={3}>
+      <Box textAlign="center" mb={4}>
+        <Typography variant="h5" fontWeight="600" color="white" gutterBottom>
+          Online Banking Login
+        </Typography>
+        <Typography variant="body2" color="rgba(255,255,255,0.6)">
+          Access your account securely
+        </Typography>
+      </Box>
+
+      {/* Customer ID */}
+      <Box>
+        <Typography variant="body2" fontWeight="500" color="rgba(255,255,255,0.8)" mb={1}>
+          Customer ID
+        </Typography>
+        <TextField
+          fullWidth
+          id="userId"
+          placeholder="Enter your customer ID"
+          value={credentials.userId}
+          onChange={(e) => handleInputChange('userId', e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <User size={16} style={{ color: 'rgba(255,255,255,0.5)' }} />
+              </InputAdornment>
+            ),
+          }}
+          variant="outlined"
+          sx={{
+            input: {
+              color: 'white',
+              backgroundColor: 'rgba(255,255,255,0.1)',
+              backdropFilter: 'blur(4px)',
+              '::placeholder': {
+                color: 'rgba(255,255,255,0.5)',
+              },
+            },
+            '& .MuiOutlinedInput-root': {
+              borderColor: 'rgba(255,255,255,0.2)',
+              '&.Mui-focused': {
+                backgroundColor: 'rgba(255,255,255,0.15)',
+              },
+            },
+          }}
+        />
+      </Box>
+
+      {/* Password */}
+      <Box>
+        <Typography variant="body2" fontWeight="500" color="rgba(255,255,255,0.8)" mb={1}>
+          Online Banking Password
+        </Typography>
+        <TextField
+          fullWidth
+          type="password"
+          id="password"
+          placeholder="Enter your banking password"
+          value={credentials.password}
+          onChange={(e) => handleInputChange('password', e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Lock size={16} style={{ color: 'rgba(255,255,255,0.5)' }} />
+              </InputAdornment>
+            ),
+          }}
+          sx={{
+            input: {
+              color: 'white',
+              backgroundColor: 'rgba(255,255,255,0.1)',
+              backdropFilter: 'blur(4px)',
+              '::placeholder': {
+                color: 'rgba(255,255,255,0.5)',
+              },
+            },
+            '& .MuiOutlinedInput-root': {
+              borderColor: 'rgba(255,255,255,0.2)',
+              '&.Mui-focused': {
+                backgroundColor: 'rgba(255,255,255,0.15)',
+              },
+            },
+          }}
+        />
+      </Box>
+
+      {/* Submit Button */}
+      <Button
+        fullWidth
+        variant="contained"
+        color="primary"
+        sx={{
+          py: 1.5,
+          borderRadius: 2,
+          fontWeight: 500,
+          transition: 'all 0.3s',
+          '&:hover': {
+            transform: 'scale(1.02)',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+          },
+        }}
+      >
+        Access My Account
+      </Button>
+
+      {/* Footer Info */}
+      <Typography variant="caption" color="rgba(255,255,255,0.5)" align="center">
+        Protected by 256-bit SSL encryption
+      </Typography>
+
+      {/* Flip Button */}
+      <Box textAlign="center" pt={2}>
+        <IconButton
+          onClick={onFlip}
+          sx={{
+            color: 'rgba(255,255,255,0.7)',
+            fontSize: 14,
+            '&:hover': { color: '#90cdf4' },
+          }}
+        >
+          <ArrowRightLeft size={16} />
+          <Typography ml={1} variant="body2">
+            Switch to Business Login
+          </Typography>
+        </IconButton>
+      </Box>
+    </Box>
+  </Box>
+);
+
+export default StandardForm;
