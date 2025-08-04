@@ -1,0 +1,170 @@
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import {
+  Box,
+  Typography,
+  Button,
+  Stack,
+  Paper,
+  Divider,
+  IconButton,
+} from "@mui/material";
+import SecurityIcon from "@mui/icons-material/Security";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import HomeIcon from "@mui/icons-material/Home";
+
+const NotFound = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    console.error(
+      "404 Error: User attempted to access non-existent route:",
+      location.pathname
+    );
+  }, [location.pathname]);
+
+  return (
+    <Box
+      sx={{
+        minHeight: "100vh",
+        background: "linear-gradient(to bottom right, #3b82f6 10%, #0f172a 90%)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        overflow: "hidden",
+        position: "relative",
+        px: 2,
+      }}
+    >
+      {/* Background gradients */}
+      <Box
+        sx={{
+          position: "absolute",
+          inset: 0,
+          background: "linear-gradient(to bottom right, rgba(59,130,246,0.05), transparent)",
+        }}
+      />
+      <Box
+        sx={{
+          position: "absolute",
+          inset: 0,
+          background: "linear-gradient(to top left, rgba(100,116,139,0.1), transparent)",
+        }}
+      />
+
+      {/* Main Card */}
+      <Paper
+        elevation={12}
+        sx={{
+          position: "relative",
+          zIndex: 10,
+          textAlign: "center",
+          p: 6,
+          maxWidth: 500,
+          width: "100%",
+          borderRadius: 6,
+          backdropFilter: "blur(24px)",
+          backgroundColor: "rgba(255,255,255,0.05)",
+          border: "1px solid rgba(255,255,255,0.15)",
+        }}
+      >
+        {/* Shield Icon */}
+        <Box sx={{ display: "flex", justifyContent: "center", mb: 4 }}>
+          <Box
+            sx={{
+              p: 2,
+              borderRadius: "50%",
+              backgroundColor: "rgba(239,68,68,0.2)",
+              backdropFilter: "blur(4px)",
+            }}
+          >
+            <SecurityIcon sx={{ fontSize: 48, color: "#ef4444" }} />
+          </Box>
+        </Box>
+
+        {/* Headings */}
+        <Typography
+          variant="h1"
+          sx={{
+            fontWeight: "bold",
+            fontSize: { xs: "3.5rem", sm: "4rem" },
+            background: "linear-gradient(to right, #3b82f6, #8b5cf6)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            mb: 2,
+          }}
+        >
+          404
+        </Typography>
+        <Typography
+          variant="h5"
+          sx={{ fontWeight: 600, color: "#fff", mb: 2 }}
+        >
+          Page Not Found
+        </Typography>
+        <Typography
+          sx={{
+            color: "#94a3b8",
+            mb: 4,
+            fontSize: "0.95rem",
+            lineHeight: 1.6,
+          }}
+        >
+          The banking service you're looking for has been moved or is temporarily
+          unavailable. Please verify your URL or return to the main banking portal.
+        </Typography>
+
+        {/* Buttons */}
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          spacing={2}
+          justifyContent="center"
+          mb={4}
+        >
+          <Button
+            onClick={() => window.history.back()}
+            variant="outlined"
+            startIcon={<ArrowBackIcon />}
+            sx={{
+              backdropFilter: "blur(4px)",
+              backgroundColor: "rgba(255,255,255,0.05)",
+              borderColor: "rgba(255,255,255,0.2)",
+              color: "#fff",
+              "&:hover": {
+                backgroundColor: "rgba(255,255,255,0.1)",
+              },
+            }}
+          >
+            Go Back
+          </Button>
+
+          <Button
+            variant="contained"
+            href="/"
+            startIcon={<HomeIcon />}
+            sx={{
+              background: "linear-gradient(to right, #3b82f6, #8b5cf6)",
+              color: "#fff",
+              "&:hover": {
+                background: "linear-gradient(to right, #2563eb, #7c3aed)",
+              },
+            }}
+          >
+            Banking Home
+          </Button>
+        </Stack>
+
+        {/* Footer */}
+        <Divider sx={{ borderColor: "rgba(255,255,255,0.1)", mb: 2 }} />
+        <Typography
+          variant="caption"
+          sx={{ color: "#cbd5e1" }}
+        >
+          Error Code: 404 | Secure Banking Portal
+        </Typography>
+      </Paper>
+    </Box>
+  );
+};
+
+export default NotFound;
