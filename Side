@@ -1,0 +1,158 @@
+import {
+  Dashboard as DashboardIcon,
+  AccountBalanceWallet as AccountsIcon,
+  CreditCard as CreditCardIcon,
+  Savings as SavingsIcon,
+  TrendingUp as InvestmentsIcon,
+  Description as StatementsIcon,
+  Security as SecurityIcon,
+  Settings as SettingsIcon,
+  SupportAgent as SupportIcon,
+  MonetizationOn as BanknoteIcon,
+} from "@mui/icons-material";
+
+import {
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+  Typography,
+  Box,
+  IconButton,
+  Collapse,
+} from "@mui/material";
+
+import { NavLink, useLocation } from "react-router-dom";
+import { useState } from "react";
+
+const drawerWidth = 240;
+const collapsedWidth = 56;
+
+const mainItems = [
+  { title: "Dashboard", url: "/", icon: <DashboardIcon /> },
+  { title: "Accounts", url: "/accounts", icon: <AccountsIcon /> },
+  { title: "Cards", url: "/cards", icon: <CreditCardIcon /> },
+  { title: "Savings", url: "/savings", icon: <SavingsIcon /> },
+  { title: "Investments", url: "/investments", icon: <TrendingUpIcon /> },
+  { title: "Statements", url: "/statements", icon: <StatementsIcon /> },
+];
+
+const supportItems = [
+  { title: "Security", url: "/security", icon: <SecurityIcon /> },
+  { title: "Settings", url: "/settings", icon: <SettingsIcon /> },
+  { title: "Support", url: "/support", icon: <SupportIcon /> },
+];
+
+export function AppSidebar() {
+  const location = useLocation();
+  const currentPath = location.pathname;
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const isActive = (path: string) => currentPath === path;
+
+  const getNavStyles = (isActive: boolean) => ({
+    backgroundColor: isActive ? "rgba(25, 118, 210, 0.1)" : "transparent",
+    color: isActive ? "#1976d2" : "inherit",
+    borderLeft: isActive ? "4px solid #1976d2" : "4px solid transparent",
+    paddingLeft: isCollapsed ? 0 : 2,
+    fontWeight: isActive ? 600 : 400,
+    "&:hover": {
+      backgroundColor: "rgba(0, 0, 0, 0.04)",
+    },
+    textDecoration: "none",
+  });
+
+  return (
+    <Drawer
+      variant="permanent"
+      sx={{
+        width: isCollapsed ? collapsedWidth : drawerWidth,
+        flexShrink: 0,
+        "& .MuiDrawer-paper": {
+          width: isCollapsed ? collapsedWidth : drawerWidth,
+          boxSizing: "border-box",
+          backgroundColor: "rgba(255, 255, 255, 0.8)",
+          backdropFilter: "blur(10px)",
+          borderRight: "1px solid rgba(0, 0, 0, 0.1)",
+        },
+      }}
+    >
+      <Box sx={{ p: 2, display: "flex", alignItems: "center", gap: 1 }}>
+        <Box
+          sx={{
+            width: 32,
+            height: 32,
+            bgcolor: "primary.main",
+            borderRadius: 1,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "primary.contrastText",
+          }}
+        >
+          <BanknoteIcon fontSize="small" />
+        </Box>
+        {!isCollapsed && (
+          <Box>
+            <Typography variant="subtitle1" fontWeight="bold">
+              SecureBank
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              Personal Banking
+            </Typography>
+          </Box>
+        )}
+      </Box>
+
+      <Divider />
+
+      {!isCollapsed && (
+        <Typography
+          variant="caption"
+          sx={{ px: 2, py: 1, color: "text.secondary" }}
+        >
+          Banking
+        </Typography>
+      )}
+      <List>
+        {mainItems.map((item) => (
+          <NavLink
+            key={item.title}
+            to={item.url}
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
+            <ListItem button sx={getNavStyles(isActive(item.url))}>
+              <ListItemIcon sx={{ minWidth: 40 }}>{item.icon}</ListItemIcon>
+              {!isCollapsed && <ListItemText primary={item.title} />}
+            </ListItem>
+          </NavLink>
+        ))}
+      </List>
+
+      {!isCollapsed && (
+        <Typography
+          variant="caption"
+          sx={{ px: 2, py: 1, color: "text.secondary" }}
+        >
+          Support
+        </Typography>
+      )}
+      <List>
+        {supportItems.map((item) => (
+          <NavLink
+            key={item.title}
+            to={item.url}
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
+            <ListItem button sx={getNavStyles(isActive(item.url))}>
+              <ListItemIcon sx={{ minWidth: 40 }}>{item.icon}</ListItemIcon>
+              {!isCollapsed && <ListItemText primary={item.title} />}
+            </ListItem>
+          </NavLink>
+        ))}
+      </List>
+    </Drawer>
+  );
+}
