@@ -1,0 +1,156 @@
+import React, { useState } from 'react';
+import { Box, Select, MenuItem, Typography } from '@mui/material';
+import { TreeView, TreeItem } from '@mui/x-tree-view';
+import { ExpandMore, ChevronRight } from '@mui/icons-material';
+import { useNavigate, useLocation } from 'react-router-dom';
+
+const modules = {
+  BS: {
+    label: 'Balance Sheet',
+    types: [
+      {
+        id: 'bs-home',
+        label: 'Home',
+        path: '/bs/home',
+      },
+      {
+        id: 'bs-worklists',
+        label: 'Worklists',
+        children: [
+          {
+            id: 'bs-worklist-1',
+            label: 'Pending',
+            path: '/bs/worklists/pending',
+          },
+          {
+            id: 'bs-worklist-2',
+            label: 'Completed',
+            path: '/bs/worklists/completed',
+          },
+        ],
+      },
+      {
+        id: 'bs-moc',
+        label: 'MOC',
+        path: '/bs/moc',
+      },
+      {
+        id: 'bs-download',
+        label: 'Download',
+        path: '/bs/download',
+      },
+    ],
+  },
+  MOC: {
+    label: 'Memorandum of Changes',
+    types: [
+      {
+        id: 'moc-home',
+        label: 'MOC Home',
+        path: '/moc/home',
+      },
+      {
+        id: 'moc-categories',
+        label: 'Categories',
+        children: [
+          {
+            id: 'moc-cat-1',
+            label: 'Adjustments',
+            path: '/moc/categories/adjustments',
+          },
+          {
+            id: 'moc-cat-2',
+            label: 'Reclassifications',
+            path: '/moc/categories/reclassifications',
+          },
+        ],
+      },
+    ],
+  },
+};
+
+export default function ModuleTreeView() {
+  const [selectedModule, setSelectedModule] = useState('BS');
+  const [selectedNodeId, setSelectedNodeId] = useState(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Sync selected node based on URL (optional)
+  React.useEffect(() => {
+    const currentModule = modules[selectedModule];
+    const findSelectedNode = (nodes) => {
+      for (const node of nodes) {
+        if (node.path === location.pathname) return node.id;
+        if (node.children) {
+          const match = findSelectedNode(node.children);
+          if (match) return match;
+        }
+      }
+      return null;
+    };
+    const selected = findSelectedNode(currentModule.types);
+    if (selected) {
+      setSelectedNodeId(selected);
+    }
+  }, [location.pathname, selectedModule]);
+
+  const handleModuleChange = (e) => {
+    setSelectedModule(e.target.value);
+    setSelectedNodeId(null); // Reset selection on module change
+  };
+
+  const handleNodeSelect = (event, nodeId, path) => {
+    setSelectedNodeId(nodeId);
+    if (path) navigate(path);
+  };
+
+  const renderTreeItems = (nodes) =>
+    nodes.map((node) => {
+      if (node.children) {
+        return (
+          <TreeItem key={node.id} nodeId={node.id} label={node.label}>
+            {renderTreeItems(node.children)}
+          </TreeItem>
+        );
+      }
+      return (
+        <TreeItem
+          key={node.id}
+          nodeId={node.id}
+          label={node.label}
+          onClick={(e) => handleNodeSelect(e, node.id, node.path)}
+        />
+      );
+    });
+
+  return (
+    <Box sx={{ width: 300, p: 2 }}>
+      <Typography variant="h6" gutterBottom>
+        {modules[selectedModule].label}
+      </Typography>
+
+      <Select
+        fullWidth
+        value={selectedModule}
+        onChange={handleModuleChange}
+        sx={{ mb: 2 }}
+      >
+        {Object.entries(modules).map(([key, value]) => (
+          <MenuItem key={key} value={key}>
+            {value.label}
+          </MenuItem>
+        ))}
+      </Select>
+
+      <TreeView
+        aria-label="module tree"
+        defaultCollapseIcon={<ExpandMore />}
+        defaultExpandIcon={<ChevronRight />}
+        selected={selectedNodeId}
+        sx={{ flexGrow: 1, overflowY: 'auto' }}
+      >
+        {renderTreeItems(modules[selectedModule].types)}
+      </TreeView>
+    </Box>
+  );
+}
