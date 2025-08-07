@@ -1,0 +1,150 @@
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, Select, MenuItem } from '@mui/material';
+import { useNavigate, useLocation } from 'react-router-dom';
+import RichTreeView from '@mui/x-tree-view/RichTreeView';
+
+const modules = {
+  BS: {
+    label: 'Balance Sheet',
+    types: [
+      {
+        id: 'bs-home',
+        label: 'Home',
+        itemId: '/bs/home',
+      },
+      {
+        id: 'bs-worklists',
+        label: 'Worklists',
+        children: [
+          {
+            id: 'bs-worklist-pending',
+            label: 'Pending',
+            itemId: '/bs/worklists/pending',
+          },
+          {
+            id: 'bs-worklist-completed',
+            label: 'Completed',
+            itemId: '/bs/worklists/completed',
+          },
+        ],
+      },
+      {
+        id: 'bs-moc',
+        label: 'MOC',
+        itemId: '/bs/moc',
+      },
+      {
+        id: 'bs-download',
+        label: 'Download',
+        itemId: '/bs/download',
+      },
+    ],
+  },
+  MOC: {
+    label: 'Memorandum of Changes',
+    types: [
+      {
+        id: 'moc-home',
+        label: 'MOC Home',
+        itemId: '/moc/home',
+      },
+      {
+        id: 'moc-categories',
+        label: 'Categories',
+        children: [
+          {
+            id: 'moc-cat-adjustments',
+            label: 'Adjustments',
+            itemId: '/moc/categories/adjustments',
+          },
+          {
+            id: 'moc-cat-reclassifications',
+            label: 'Reclassifications',
+            itemId: '/moc/categories/reclassifications',
+          },
+        ],
+      },
+    ],
+  },
+};
+
+export default function ModuleTreeView() {
+  const [selectedModule, setSelectedModule] = useState('BS');
+  const [selectedId, setSelectedId] = useState(null);
+  const [expandedItems, setExpandedItems] = useState([]);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleSelect = (event, itemId) => {
+    if (itemId) {
+      setSelectedId(itemId);
+      navigate(itemId);
+    }
+  };
+
+  const handleModuleChange = (e) => {
+    setSelectedModule(e.target.value);
+    setSelectedId(null);
+    setExpandedItems([]); // reset expansion on module switch
+  };
+
+  // Automatically select item based on route
+  useEffect(() => {
+    const findMatch = (items) => {
+      for (const item of items) {
+        if (item.itemId === location.pathname) return item.itemId;
+        if (item.children) {
+          const match = findMatch(item.children);
+          if (match) return match;
+        }
+      }
+      return null;
+    };
+
+    const matched = findMatch(modules[selectedModule].types);
+    if (matched) {
+      setSelectedId(matched);
+    }
+  }, [location.pathname, selectedModule]);
+
+  // 👇 Single expand logic here
+  const handleExpansionChange = (event, itemIds) => {
+    if (!itemIds.length) {
+      setExpandedItems([]);
+    } else {
+      // Always keep only the latest expanded item
+      const latest = itemIds[itemIds.length - 1];
+      setExpandedItems([latest]);
+    }
+  };
+
+  return (
+    <Box sx={{ width: 300, p: 2 }}>
+      <Typography variant="h6" gutterBottom>
+        {modules[selectedModule].label}
+      </Typography>
+
+      <Select
+        fullWidth
+        value={selectedModule}
+        onChange={handleModuleChange}
+        sx={{ mb: 2 }}
+      >
+        {Object.entries(modules).map(([key, value]) => (
+          <MenuItem key={key} value={key}>
+            {value.label}
+          </MenuItem>
+        ))}
+      </Select>
+
+      <RichTreeView
+        items={modules[selectedModule].types}
+        selectedItems={selectedId ? [selectedId] : []}
+        expandedItems={expandedItems}
+        onItemSelectionChange={handleSelect}
+        onExpandedItemsChange={handleExpansionChange}
+      />
+    </Box>
+  );
+}
