@@ -1,0 +1,162 @@
+import React, { useState, useEffect, useMemo } from 'react';
+import { Box, Typography, Select, MenuItem } from '@mui/material';
+import { useNavigate, useLocation } from 'react-router-dom';
+import RichTreeView from '@mui/x-tree-view/RichTreeView';
+
+const commonItems = [
+  {
+    id: 'home',
+    label: 'Home',
+    itemId: '/home',
+  },
+];
+
+const modules = {
+  BS: {
+    label: 'Balance Sheet',
+    types: [
+      {
+        id: 'bs-worklists',
+        label: 'Worklists',
+        children: [
+          {
+            id: 'bs-worklist-pending',
+            label: 'Pending',
+            itemId: '/bs/worklists/pending',
+          },
+          {
+            id: 'bs-worklist-completed',
+            label: 'Completed',
+            itemId: '/bs/worklists/completed',
+          },
+        ],
+      },
+      {
+        id: 'bs-moc',
+        label: 'MOC',
+        itemId: '/bs/moc',
+      },
+      {
+        id: 'bs-download',
+        label: 'Download',
+        itemId: '/bs/download',
+      },
+    ],
+  },
+  MOC: {
+    label: 'Memorandum of Changes',
+    types: [
+      {
+        id: 'moc-categories',
+        label: 'Categories',
+        children: [
+          {
+            id: 'moc-cat-adjustments',
+            label: 'Adjustments',
+            itemId: '/moc/categories/adjustments',
+          },
+          {
+            id: 'moc-cat-reclassifications',
+            label: 'Reclassifications',
+            itemId: '/moc/categories/reclassifications',
+          },
+        ],
+      },
+      {
+        id: 'moc-history',
+        label: 'History',
+        itemId: '/moc/history',
+      },
+    ],
+  },
+};
+
+export default function ModuleTreeView() {
+  const [selectedModule, setSelectedModule] = useState('BS');
+  const [selectedId, setSelectedId] = useState(null);
+  const [expandedItems, setExpandedItems] = useState([]);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const currentTreeItems = useMemo(() => [
+    ...commonItems,
+    ...modules[selectedModule].types,
+  ], [selectedModule]);
+
+  const itemMap = useMemo(() => {
+    const map = new Map();
+
+    const flatten = (items) => {
+      for (const item of items) {
+        map.set(item.id, item);
+        if (item.children) {
+          flatten(item.children);
+        }
+      }
+    };
+
+    flatten(currentTreeItems);
+    return map;
+  }, [currentTreeItems]);
+
+  const handleSelect = (event, itemId) => {
+    const item = itemMap.get(itemId);
+    if (!item || item.children) return;
+    setSelectedId(itemId);
+    navigate(item.itemId);
+  };
+
+  const handleModuleChange = (e) => {
+    setSelectedModule(e.target.value);
+    setSelectedId(null);
+    setExpandedItems([]);
+  };
+
+  const handleExpansionChange = (event, itemIds) => {
+    // Only allow one expanded at a time
+    if (!itemIds.length) {
+      setExpandedItems([]);
+    } else {
+      const latest = itemIds[itemIds.length - 1];
+      setExpandedItems([latest]);
+    }
+  };
+
+  useEffect(() => {
+    for (const [id, item] of itemMap.entries()) {
+      if (item.itemId === location.pathname) {
+        setSelectedId(id);
+        break;
+      }
+    }
+  }, [location.pathname, itemMap]);
+
+  return (
+    <Box sx={{ width: 300, p: 2 }}>
+      <Typography variant="h6" gutterBottom>
+        {modules[selectedModule].label}
+      </Typography>
+
+      <Select
+        fullWidth
+        value={selectedModule}
+        onChange={handleModuleChange}
+        sx={{ mb: 2 }}
+      >
+        {Object.entries(modules).map(([key, value]) => (
+          <MenuItem key={key} value={key}>
+            {value.label}
+          </MenuItem>
+        ))}
+      </Select>
+
+      <RichTreeView
+        items={currentTreeItems}
+        selectedItems={selectedId ? [selectedId] : []}
+        expandedItems={expandedItems}
+        onItemSelectionChange={handleSelect}
+        onExpandedItemsChange={handleExpansionChange}
+      />
+    </Box>
+  );
+}
