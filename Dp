@@ -1,0 +1,3 @@
+Devplus App <- - port - -> devplus db
+Developer desktop- - 443 & 22 - -> devplus app
+Developer desktop- - port & 22 - -> devplus db
