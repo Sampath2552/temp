@@ -1,0 +1,96 @@
+package com.example.demo.response;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import org.springframework.http.HttpStatus;
+
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Generic API Response Wrapper
+ * Single class for SUCCESS/ERROR responses
+ * Extensible, scalable and SOLID-compliant (single responsibility: response building)
+ */
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class ApiResponse {
+
+    private final String status;      // SUCCESS / FAILURE
+    private final int statusCode;     // HTTP code (200, 400, 409, etc.)
+    private final String message;     // Short summary
+    private final Map<String, Object> data; // Actual payload
+
+    private ApiResponse(String status, int statusCode, String message, Map<String, Object> data) {
+        this.status = status;
+        this.statusCode = statusCode;
+        this.message = message;
+        this.data = data != null ? data : new HashMap<>();
+    }
+
+    /* -------------------- ✅ Public Static Factory Methods -------------------- */
+
+    public static ApiResponse success(Object result, String message) {
+        Map<String, Object> payload = basePayload(true, message);
+        payload.put("result", result);
+
+        return new ApiResponse("SUCCESS", HttpStatus.OK.value(), message, payload);
+    }
+
+    public static ApiResponse success(Object result) {
+        return success(result, "Request processed successfully");
+    }
+
+    public static ApiResponse paginated(Object result, int page, int size, long totalElements, String message) {
+        Map<String, Object> payload = basePayload(true, message);
+        payload.put("result", result);
+
+        // Pagination info
+        Map<String, Object> pagination = new HashMap<>();
+        pagination.put("page", page);
+        pagination.put("size", size);
+        pagination.put("totalElements", totalElements);
+        pagination.put("totalPages", (int) Math.ceil((double) totalElements / size));
+
+        payload.put("pagination", pagination);
+
+        return new ApiResponse("SUCCESS", HttpStatus.OK.value(), message, payload);
+    }
+
+    public static ApiResponse badRequest(String message) {
+        return error(HttpStatus.BAD_REQUEST, message);
+    }
+
+    public static ApiResponse conflict(String message) {
+        return error(HttpStatus.CONFLICT, message);
+    }
+
+    public static ApiResponse notFound(String message) {
+        return error(HttpStatus.NOT_FOUND, message);
+    }
+
+    public static ApiResponse internalError(String message) {
+        return error(HttpStatus.INTERNAL_SERVER_ERROR, message);
+    }
+
+    /* -------------------- ✅ Private Helper -------------------- */
+
+    private static ApiResponse error(HttpStatus status, String message) {
+        Map<String, Object> payload = basePayload(false, message);
+        return new ApiResponse("FAILURE", status.value(), message, payload);
+    }
+
+    private static Map<String, Object> basePayload(boolean isSuccess, String message) {
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("status", isSuccess);
+        payload.put("message", message);
+        payload.put("timestamp", LocalDateTime.now());
+        return payload;
+    }
+
+    /* -------------------- ✅ Getters -------------------- */
+
+    public String getStatus() { return status; }
+    public int getStatusCode() { return statusCode; }
+    public String getMessage() { return message; }
+    public Map<String, Object> getData() { return data; }
+}
